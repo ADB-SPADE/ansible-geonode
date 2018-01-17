@@ -1,0 +1,16 @@
+- hosts: localhost
+  pre_tasks:
+  - name: ensure web server packages are installed
+    apt: name={{item}}
+    become: yes
+    with_items:
+      - curl
+      - unzip
+  vars:
+    app_name: spade
+    github_user: ewsterrenburg
+    deploy_user: geo
+    code_repository: https://github.com/ADB-SPADE/SPADE.git
+    server_name: localhost
+  roles:
+   - { role: ansible-geonode }
