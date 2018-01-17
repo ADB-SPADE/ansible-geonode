@@ -67,6 +67,11 @@
        virtualenv={{virtualenv_dir}}/{{app_name}}
        extra_args='-U'
 
+- name: install awesome-slugify in virtualenv from git
+  pip: name=git+https://github.com/dimka665/awesome-slugify.git@master
+       virtualenv={{virtualenv_dir}}/{{app_name}}
+       extra_args='-U'
+
 - name: install bcrypt
   pip: name=django[bcrypt]
        version=1.8.18
