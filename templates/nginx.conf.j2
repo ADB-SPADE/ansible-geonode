@@ -14,7 +14,7 @@ server {
     client_max_body_size {{ nginx_client_max_body_size }};
 
     location / {
-        root /var/www/{{ app_name }};
+        root /data/{{ app_name }};
         try_files $uri @wsgiapp;
         add_header Access-Control-Allow-Origin "*";
     }

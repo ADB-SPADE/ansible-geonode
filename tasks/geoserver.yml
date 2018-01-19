@@ -77,7 +77,7 @@
     url={{ gs_data_url }}
     owner=0
     group=0
-    mode=0644
+    mode=0655
 
 - name: wait for data file to be downloaded
   when: gs_war_url == "http://build.geonode.org/geoserver/latest/geoserver-2.9.x-oauth2.war"
