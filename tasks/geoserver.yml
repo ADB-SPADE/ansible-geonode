@@ -50,7 +50,15 @@
   become: yes
   template: src=web.xml.j2 dest=/var/lib/tomcat8/webapps/geoserver/WEB-INF/web.xml
 
-- name: unzip oauth2 data folder
+- name: create geoserver data parent folder
+  file: path=/data/geoserver state=directory mode=0655 owner=tomcat8 group=tomcat8
+  become: yes
+
+- name: create geoserver data folder
+  file: path=/data/geoserver/data state=directory mode=0655 owner=tomcat8 group=tomcat8
+  become: yes
+
+- name: mv data folder to specified location
   become: yes
   shell: "mv /var/lib/tomcat8/webapps/geoserver/data/* /data/geoserver/data/"
 
