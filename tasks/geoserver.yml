@@ -47,11 +47,12 @@
     state: stopped
 
 - name: Copy web.xml into place
+  become: yes
   template: src=web.xml.j2 dest=/var/lib/tomcat8/webapps/geoserver/WEB-INF/web.xml
 
 - name: unzip oauth2 data folder
   become: yes
-  shell: "mv /var/lib/tomcat8/webapps/geoserver/data/* /data/geoserver/"
+  shell: "mv /var/lib/tomcat8/webapps/geoserver/data/* /data/geoserver/data/"
 
 - name: remove default data folder if oauth2 GeoServer used
   become: yes
