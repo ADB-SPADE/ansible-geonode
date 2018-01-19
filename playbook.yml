@@ -9,8 +9,10 @@
   vars:
     app_name: spade
     github_user: ewsterrenburg
-    deploy_user: geo
+    deploy_user: ubuntu
     code_repository: https://github.com/ADB-SPADE/SPADE.git
-    server_name: localhost
+    server_name: adb-spade.org
+    gs_users_xml: /data/geoserver/data/security/usergroup/default/users.xml
   roles:
    - { role: ansible-geonode }
+

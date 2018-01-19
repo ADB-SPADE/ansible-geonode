@@ -27,11 +27,11 @@ DATABASES = {
 
 
 GEOSERVER_LOCATION = os.getenv(
-    'GEOSERVER_LOCATION', 'http://localhost:8080/geoserver/'
+    'GEOSERVER_LOCATION', '{{server_name}}/geoserver/'
 )
 
 GEOSERVER_PUBLIC_LOCATION = os.getenv(
-    'GEOSERVER_LOCATION', 'http://localhost:8080/geoserver/'
+    'GEOSERVER_LOCATION', '{{server_name}}/geoserver/'
 )
 
 OGC_SERVER_DEFAULT_USER = os.getenv(
@@ -46,10 +46,10 @@ OGC_SERVER_DEFAULT_PASSWORD = os.getenv(
 OGC_SERVER = {
     'default' : {
         'BACKEND' : 'geonode.geoserver',
-        'LOCATION' : 'http://localhost:8080/geoserver/',
+        'LOCATION' : GEOSERVER_LOCATION,
         'LOGIN_ENDPOINT': 'j_spring_oauth2_geonode_login',
         'LOGOUT_ENDPOINT': 'j_spring_oauth2_geonode_logout',
-        'PUBLIC_LOCATION' : 'http://{{server_name}}/geoserver/',
+        'PUBLIC_LOCATION' : GEOSERVER_PUBLIC_LOCATION = os.getenv(,
         'USER' : '{{ gs_admin_user }}',
         'PASSWORD' : '{{ gs_admin_password }}',
         'MAPFISH_PRINT_ENABLED' : True,
@@ -65,6 +65,89 @@ OGC_SERVER = {
     }
 }
 
+STAMEN_ATTR = ('Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a'
+               ' href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</'
+               'a> &mdash; Map data &copy; <a href="http://www.openstreetmap.o'
+'rg/copyright">OpenStreetMap</a>')
+
+
+MAP_BASELAYERS = [{"source": {
+    "ptype": "gxp_wmscsource",
+    "url": OGC_SERVER['default']['PUBLIC_LOCATION'] + "wms",
+    "restUrl": "/gs/rest",
+    "title": "{{ app_name }} Geoserver"
+}},
+{
+    "source": {"ptype": "gxp_olsource"},
+    "type":"OpenLayers.Layer",
+    "args":["No background"],
+    "visibility": False,
+    "fixed": True,
+    "group":"background"
+  },
+{
+    "source": {"ptype": "gxp_mapboxsource"},
+  },
+{
+    "source": {"ptype": "gxp_olsource"},
+    "type":"OpenLayers.Layer.XYZ",
+    "args":[
+    "hot", ["http://a.tile.openstreetmap.fr/hot/${z}/${x}/${y}.png", "http://b.tile.openstreetmap.fr/hot/${z}/${x}/${y}.png", "http://c.tile.openstreetmap.fr/hot/${z}/${x}/${y}.png"], {"transitionEffect": "resize","attribution": "osm_attribution"}],
+    "visibility": True,
+    "fixed": True,
+    "group":"background"
+},{
+    "source": {"ptype": "gxp_olsource"},
+    "type": "OpenLayers.Layer.OSM",
+    "name": "mapnik",
+    "visibility": True,
+    "fixed": True,
+    "group": "background"
+}, {
+    "source": {"ptype": "gxp_olsource"},
+    "type": "OpenLayers.Layer.XYZ",
+    "args": [
+        'Stamen Toner',
+        'http://stamen-tiles-a.a.ssl.fastly.net/toner/${z}/${x}/${y}.png',
+        {
+            'transitionEffect': 'resize',
+            'attribution': '%s' % STAMEN_ATTR,
+        }
+    ],
+    "visibility": False,
+    "fixed": True,
+    "group": "background"
+}, {
+    "source": {"ptype": "gxp_olsource"},
+    "type": "OpenLayers.Layer.XYZ",
+    "args": [
+        'Stamen Toner Lite',
+        'http://stamen-tiles-a.a.ssl.fastly.net/toner-lite/${z}/${x}/${y}.png',
+        {
+            'transitionEffect': 'resize',
+            'attribution': '%s' % STAMEN_ATTR,
+        }
+    ],
+    "visibility": False,
+    "fixed": True,
+    "group": "background"
+}, {
+    "source": {"ptype": "gxp_olsource"},
+    "type": "OpenLayers.Layer.XYZ",
+    "args": [
+        'Stamen Watercolor',
+        'http://stamen-tiles-a.a.ssl.fastly.net/watercolor/${z}/${x}/${y}.png',
+        {
+            'transitionEffect': 'resize',
+            'attribution': '%s' % STAMEN_ATTR,
+        }
+    ],
+    "visibility": False,
+    "fixed": True,
+    "group": "background"
+}]
+
+
 CATALOGUE = {
     'default': {
         'ENGINE': 'geonode.catalogue.backends.pycsw_local',
@@ -72,8 +155,8 @@ CATALOGUE = {
     }
 }
 
-MEDIA_ROOT = "/var/www/{{ app_name }}/uploaded"
-STATIC_ROOT = "/var/www/{{ app_name }}/static"
+MEDIA_ROOT = "/data/{{ app_name }}/uploaded"
+STATIC_ROOT = "/data/{{ app_name }}/static"
 
 PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
@@ -83,12 +166,15 @@ PASSWORD_HASHERS = [
 ]
 
 
-PROXY_ALLOWED_HOSTS += ('nominatim.openstreetmap.org', "https://services.bgr.de/wms/")
+PROXY_ALLOWED_HOSTS += ('localhost', '127.0.0.1', '{{ server_name }}', 'nominatim.openstreetmap.org', "https://services.bgr.de/wms/")
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '{{ server_name }}']
 
 
 GEOSERVER_BASE_URL = GEOSERVER_LOCATION
-MAXIMUM_CLIP_SIZE = 40
+MAXIMUM_CLIP_SIZE = 10000000
+
+
+
 
 DEBUG = False
 #debug_toolbar settings
