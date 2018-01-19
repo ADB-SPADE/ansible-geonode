@@ -7,6 +7,14 @@
   apt: update_cache=yes
   become: yes
 
+- name: create geoserver data parent folder
+  file: path=/data/geoserver state=directory mode=0655 owner=tomcat8 group=tomcat8
+  become: yes
+
+- name: create geoserver data folder
+  file: path=/data/geoserver/data state=directory mode=0655 owner=tomcat8 group=tomcat8
+  become: yes
+
 - name: install Tomcat
   apt: pkg={{ item }} state=present
   become: yes
@@ -49,14 +57,6 @@
 - name: Copy web.xml into place
   become: yes
   template: src=web.xml.j2 dest=/var/lib/tomcat8/webapps/geoserver/WEB-INF/web.xml
-
-- name: create geoserver data parent folder
-  file: path=/data/geoserver state=directory mode=0655 owner=tomcat8 group=tomcat8
-  become: yes
-
-- name: create geoserver data folder
-  file: path=/data/geoserver/data state=directory mode=0655 owner=tomcat8 group=tomcat8
-  become: yes
 
 - name: mv data folder to specified location
   become: yes
