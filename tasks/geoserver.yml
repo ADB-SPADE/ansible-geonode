@@ -7,14 +7,6 @@
   apt: update_cache=yes
   become: yes
 
-- name: create geoserver data parent folder
-  file: path=/data/geoserver state=directory mode=0655 owner=tomcat8 group=tomcat8
-  become: yes
-
-- name: create geoserver data folder
-  file: path=/data/geoserver/data state=directory mode=0655 owner=tomcat8 group=tomcat8
-  become: yes
-
 - name: install Tomcat
   apt: pkg={{ item }} state=present
   become: yes
@@ -32,6 +24,14 @@
   with_items:
     - regexp: "^#?\\s*JAVA_OPTS\\s*="
       line: "JAVA_OPTS=\"-Djava.awt.headless=true -Xms{{ tomcat_xms }} -Xmx{{ tomcat_xmx }} -XX:MaxPermSize={{ tomcat_maxpermsize }} -XX:PermSize={{ tomcat_permsize }} -XX:+UseConcMarkSweepGC\""
+
+- name: create geoserver data parent folder
+  file: path=/data/geoserver state=directory mode=0655 owner=tomcat8 group=tomcat8
+  become: yes
+
+- name: create geoserver data folder
+  file: path=/data/geoserver/data state=directory mode=0655 owner=tomcat8 group=tomcat8
+  become: yes
 
 - name: download GeoServer (remote)
   become: yes
@@ -87,7 +87,7 @@
 - name: unzip oauth2 data folder
   become: yes
   when: gs_war_url == "http://build.geonode.org/geoserver/latest/geoserver-2.9.x-oauth2.war"
-  shell: "cd /data/geoserver/ && unzip data.zip && chown -R tomcat8:tomcat8 data"
+  shell: "cd /data/geoserver/ && unzip data.zip && chown -R tomcat8:tomcat8 data && chmod -R 0777 /data/"
 
 - name: remove data.zip
   become: yes
