@@ -27,11 +27,11 @@ DATABASES = {
 
 
 GEOSERVER_LOCATION = os.getenv(
-    'GEOSERVER_LOCATION', '{{server_name}}/geoserver/'
+    'GEOSERVER_LOCATION', 'http://{{server_name}}/geoserver/'
 )
 
 GEOSERVER_PUBLIC_LOCATION = os.getenv(
-    'GEOSERVER_LOCATION', '{{server_name}}/geoserver/'
+    'GEOSERVER_LOCATION', 'http://{{server_name}}/geoserver/'
 )
 
 OGC_SERVER_DEFAULT_USER = os.getenv(
@@ -92,7 +92,7 @@ MAP_BASELAYERS = [{"source": {
     "source": {"ptype": "gxp_olsource"},
     "type":"OpenLayers.Layer.XYZ",
     "args":[
-    "hot", ["http://a.tile.openstreetmap.fr/hot/${z}/${x}/${y}.png", "http://b.tile.openstreetmap.fr/hot/${z}/${x}/${y}.png", "http://c.tile.openstreetmap.fr/hot/${z}/${x}/${y}.png"], {"transitionEffect": "resize","attribution": "osm_attribution"}],
+    "Humanitarian OpenStreetMap", ["http://a.tile.openstreetmap.fr/hot/${z}/${x}/${y}.png", "http://b.tile.openstreetmap.fr/hot/${z}/${x}/${y}.png", "http://c.tile.openstreetmap.fr/hot/${z}/${x}/${y}.png"], {"transitionEffect": "resize","attribution": "osm_attribution"}],
     "visibility": True,
     "fixed": True,
     "group":"background"
