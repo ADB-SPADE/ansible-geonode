@@ -13,6 +13,7 @@
     code_repository: https://github.com/ADB-SPADE/SPADE.git
     server_name: adb-spade.org
     gs_users_xml: /data/geoserver/data/security/usergroup/default/users.xml
+    nginx_client_max_body_size: 4096M
   roles:
    - { role: ansible-geonode }
 
