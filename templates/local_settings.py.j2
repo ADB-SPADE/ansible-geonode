@@ -65,93 +65,188 @@ OGC_SERVER = {
     }
 }
 
-STAMEN_ATTR = ('Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a'
-               ' href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</'
-               'a> &mdash; Map data &copy; <a href="http://www.openstreetmap.o'
-'rg/copyright">OpenStreetMap</a>')
+# default map projection
+# Note: If set to EPSG:4326, then only EPSG:4326 basemaps will work.
+DEFAULT_MAP_CRS = "EPSG:900913"
+
+# Where should newly created maps be focused?
+DEFAULT_MAP_CENTER = (22, 98)
+
+# How tightly zoomed should newly created maps be?
+# 0 = entire world;
+# maximum zoom is between 12 and 15 (for Google Maps, coverage varies by area)
+DEFAULT_MAP_ZOOM = 7
+
+ALT_OSM_BASEMAPS = os.environ.get('ALT_OSM_BASEMAPS', False)
+CARTODB_BASEMAPS = os.environ.get('CARTODB_BASEMAPS', False)
+STAMEN_BASEMAPS = os.environ.get('STAMEN_BASEMAPS', False)
+THUNDERFOREST_BASEMAPS = os.environ.get('THUNDERFOREST_BASEMAPS', False)
+MAPBOX_ACCESS_TOKEN = os.environ.get('MAPBOX_ACCESS_TOKEN', '')
+#BING_API_KEY = os.environ.get('BING_API_KEY', None)
+BING_API_KEY = "AmrPbNWeR5YPy1fazmVy1WvDizTsmFbKvgbPrNIR0Sf6a8MOvHwkouU7Rm2czjx_"
+GOOGLE_API_KEY = "AIzaSyAuTThAGpGapz7-xtOMlDfLYEXijkwbeP8"
 
 
-MAP_BASELAYERS = [{"source": {
-    "ptype": "gxp_wmscsource",
-    "url": OGC_SERVER['default']['PUBLIC_LOCATION'] + "wms",
-    "restUrl": "/gs/rest",
-    "title": "{{ app_name }} Geoserver"
-}},
-{
-    "source": {"ptype": "gxp_olsource"},
-    "type":"OpenLayers.Layer",
-    "args":["No background"],
-    "visibility": False,
-    "fixed": True,
-    "group":"background"
-  },
-{
-    "source": {"ptype": "gxp_mapboxsource"},
-  },
-{
-    "source": {"ptype": "gxp_olsource"},
-    "type":"OpenLayers.Layer.XYZ",
-    "args":[
-    "Humanitarian OpenStreetMap", ["http://a.tile.openstreetmap.fr/hot/${z}/${x}/${y}.png", "http://b.tile.openstreetmap.fr/hot/${z}/${x}/${y}.png", "http://c.tile.openstreetmap.fr/hot/${z}/${x}/${y}.png"], {"transitionEffect": "resize","attribution": "osm_attribution"}],
+MAP_BASELAYERS = [{
+    "source": {
+         "ptype":"gxp_googlesource",
+         "otherParams": "sensor=false&key={0}".format(GOOGLE_API_KEY)
+        },
+    "group":"background",
+    "name":"HYBRID",
     "visibility": True,
-    "fixed": True,
-    "group":"background"
+    "fixed": True
 },{
+    "source": {
+         "ptype":"gxp_googlesource",
+         "otherParams": "sensor=false&key={0}".format(GOOGLE_API_KEY)
+        },
+    "group":"background",
+    "name":"SATELLITE",
+    "visibility": False,
+    "fixed": True
+},{
+    "source": {
+         "ptype":"gxp_googlesource",
+         "otherParams": "sensor=false&key={0}".format(GOOGLE_API_KEY)
+        },
+    "group":"background",
+    "name":"ROADMAP",
+    "visibility": False,
+    "fixed": True
+},{
+    "source": {
+         "ptype":"gxp_googlesource",
+         "otherParams": "sensor=false&key={0}".format(GOOGLE_API_KEY)
+        },
+    "group":"background",
+    "name":"TERRAIN",
+    "visibility": False,
+    "fixed": True
+},{
+"source": {
+           "ptype":"gxp_bingsource",
+           "apiKey": BING_API_KEY
+          },
+"group":"background",
+"name":"Aerial",
+"visibility": False,
+"fixed": True
+},{
+    "source": {
+               "ptype":"gxp_bingsource",
+               "apiKey": BING_API_KEY
+              },
+    "group":"background",
+    "name":"AerialWithLabels",
+    "visibility": False,
+    "fixed": True
+},{
+    "source": {
+               "ptype":"gxp_bingsource",
+               "apiKey": BING_API_KEY
+              },
+    "group":"background",
+    "name":"Road",
+    "visibility": False,
+    "fixed": True
+}, {
     "source": {"ptype": "gxp_olsource"},
+    "type": "OpenLayers.Layer.XYZ",
+    "title": "Humanitarian OpenStreetMap",
+    "args": ["Humanitarian OpenStreetMap", "http://a.tile.openstreetmap.fr/hot/${z}/${x}/${y}.png"],
+    "name": "background",
+    "attribution": "&copy; <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a>, Tiles courtesy of <a href='http://hot.openstreetmap.org/' target='_blank'>Humanitarian OpenStreetMap Team</a>",
+    "visibility": False,
+    "fixed": True,
+    "group":"background"
+}, {
+    "source": {"ptype": "gxp_osmsource"},
     "type": "OpenLayers.Layer.OSM",
+    "title": "OpenStreetMap",
     "name": "mapnik",
-    "visibility": True,
-    "fixed": True,
-    "group": "background"
-}, {
-    "source": {"ptype": "gxp_olsource"},
-    "type": "OpenLayers.Layer.XYZ",
-    "args": [
-        'Stamen Toner',
-        'http://stamen-tiles-a.a.ssl.fastly.net/toner/${z}/${x}/${y}.png',
-        {
-            'transitionEffect': 'resize',
-            'attribution': '%s' % STAMEN_ATTR,
-        }
-    ],
+    "attribution": "&copy; <a href='http://osm.org/copyright'>OpenStreetMap</a> contributors",
     "visibility": False,
     "fixed": True,
     "group": "background"
-}, {
+},
+{
     "source": {"ptype": "gxp_olsource"},
-    "type": "OpenLayers.Layer.XYZ",
-    "args": [
-        'Stamen Toner Lite',
-        'http://stamen-tiles-a.a.ssl.fastly.net/toner-lite/${z}/${x}/${y}.png',
-        {
-            'transitionEffect': 'resize',
-            'attribution': '%s' % STAMEN_ATTR,
-        }
-    ],
+    "type": "OpenLayers.Layer",
+    "args": ["No background"],
+    "name": "background",
     "visibility": False,
     "fixed": True,
-    "group": "background"
-}, {
-    "source": {"ptype": "gxp_olsource"},
-    "type": "OpenLayers.Layer.XYZ",
-    "args": [
-        'Stamen Watercolor',
-        'http://stamen-tiles-a.a.ssl.fastly.net/watercolor/${z}/${x}/${y}.png',
-        {
-            'transitionEffect': 'resize',
-            'attribution': '%s' % STAMEN_ATTR,
-        }
-    ],
-    "visibility": False,
-    "fixed": True,
-    "group": "background"
+    "group":"background"
 }]
 
+LOCAL_GEOSERVER = {
+    "source": {
+        "ptype": "gxp_wmscsource",
+        "url": OGC_SERVER['default']['PUBLIC_LOCATION'] + "wms",
+        "restUrl": "/gs/rest"
+    }
+}
+baselayers = MAP_BASELAYERS
+MAP_BASELAYERS = [LOCAL_GEOSERVER]
+MAP_BASELAYERS.extend(baselayers)
 
 CATALOGUE = {
     'default': {
         'ENGINE': 'geonode.catalogue.backends.pycsw_local',
         'URL': '%scatalogue/csw' % SITEURL,
+    }
+}
+
+# pycsw settings
+PYCSW = {
+    # pycsw configuration
+    'CONFIGURATION': {
+        # uncomment / adjust to override server config system defaults
+        # 'server': {
+        #    'maxrecords': '10',
+        #    'pretty_print': 'true',
+        #    'federatedcatalogues': 'http://catalog.data.gov/csw'
+        # },
+        'metadata:main': {
+            'identification_title': 'GeoNode Catalogue',
+            'identification_abstract': 'GeoNode is an open source platform' \
+            ' that facilitates the creation, sharing, and collaborative use' \
+            ' of geospatial data',
+            'identification_keywords': 'sdi, catalogue, discovery, metadata,' \
+            ' GeoNode',
+            'identification_keywords_type': 'theme',
+            'identification_fees': 'None',
+            'identification_accessconstraints': 'None',
+            'provider_name': 'Organization Name',
+            'provider_url': SITEURL,
+            'contact_name': 'Lastname, Firstname',
+            'contact_position': 'Position Title',
+            'contact_address': 'Mailing Address',
+            'contact_city': 'City',
+            'contact_stateorprovince': 'Administrative Area',
+            'contact_postalcode': 'Zip or Postal Code',
+            'contact_country': 'Country',
+            'contact_phone': '+xx-xxx-xxx-xxxx',
+            'contact_fax': '+xx-xxx-xxx-xxxx',
+            'contact_email': 'Email Address',
+            'contact_url': 'Contact URL',
+            'contact_hours': 'Hours of Service',
+            'contact_instructions': 'During hours of service. Off on ' \
+            'weekends.',
+            'contact_role': 'pointOfContact',
+        },
+        'metadata:inspire': {
+            'enabled': 'true',
+            'languages_supported': 'eng,gre',
+            'default_language': 'eng',
+            'date': 'YYYY-MM-DD',
+            'gemet_keywords': 'Utility and governmental services',
+            'conformity_service': 'notEvaluated',
+            'contact_name': 'Organization Name',
+            'contact_email': 'Email Address',
+            'temp_extent': 'YYYY-MM-DD/YYYY-MM-DD',
+        }
     }
 }
 
@@ -168,42 +263,53 @@ PASSWORD_HASHERS = [
 
 PROXY_ALLOWED_HOSTS += ('localhost', '127.0.0.1', '{{ server_name }}', 'nominatim.openstreetmap.org', "https://services.bgr.de/wms/")
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '{{ server_name }}']
+# AUTH_IP_WHITELIST property limits access to users/groups REST endpoints
+# to only whitelisted IP addresses.
+#
+# Empty list means 'allow all'
+#
+# If you need to limit 'api' REST calls to only some specific IPs
+# fill the list like below:
+#
+# AUTH_IP_WHITELIST = ['192.168.1.158', '192.168.1.159']
+AUTH_IP_WHITELIST = []
 
+MANAGERS = ADMINS = os.getenv('ADMINS', [])
+TIME_ZONE = os.getenv('TIME_ZONE', "Asia/Singapore")
+USE_TZ = True
+
+# leave below if you want to have notifications
+# notification settings
+NOTIFICATION_ENABLED = False
+# pinax.notifications
+# or notification
+NOTIFICATIONS_MODULE = 'pinax.notifications'
+
+if NOTIFICATION_ENABLED:
+    INSTALLED_APPS += (NOTIFICATIONS_MODULE, )
+
+# set to true to have multiple recipients in /message/create/
+USER_MESSAGES_ALLOW_MULTIPLE_RECIPIENTS = False
+
+# allow users to add new keywrods or not
+FREETEXT_KEYWORDS_READONLY = False
+
+# allow modification of Topic Categories from Admin UI
+MODIFY_TOPICCATEGORY = True
+
+# Each uploaded Layer must be approved by an Admin before becoming visible
+ADMIN_MODERATE_UPLOADS = True
+
+# If this option is enabled, Resources belonging to a Group won't be visible by others
+GROUP_PRIVATE_RESOURCES = True
+
+# If this option is enabled, Groups will become strictly Mandatory on Metadata Wizard
+GROUP_MANDATORY_RESOURCES = True
 
 GEOSERVER_BASE_URL = GEOSERVER_LOCATION
-MAXIMUM_CLIP_SIZE = 10000000
+MAXIMUM_CLIP_SIZE = 40000000
 
 
 
 
-DEBUG = False
-#debug_toolbar settings
-if DEBUG:
-    INTERNAL_IPS = ('127.0.0.1',)
-    MIDDLEWARE_CLASSES += (
-        'debug_toolbar.middleware.DebugToolbarMiddleware',
-    )
-
-    INSTALLED_APPS += (
-        'debug_toolbar',
-    )
-
-    DEBUG_TOOLBAR_PANELS = [
-        'debug_toolbar.panels.versions.VersionsPanel',
-        'debug_toolbar.panels.timer.TimerPanel',
-        'debug_toolbar.panels.settings.SettingsPanel',
-        'debug_toolbar.panels.headers.HeadersPanel',
-        'debug_toolbar.panels.request.RequestPanel',
-        'debug_toolbar.panels.sql.SQLPanel',
-        'debug_toolbar.panels.staticfiles.StaticFilesPanel',
-        'debug_toolbar.panels.templates.TemplatesPanel',
-        'debug_toolbar.panels.cache.CachePanel',
-        'debug_toolbar.panels.signals.SignalsPanel',
-        'debug_toolbar.panels.logging.LoggingPanel',
-        'debug_toolbar.panels.redirects.RedirectsPanel',
-    ]
-
-    DEBUG_TOOLBAR_CONFIG = {
-        'INTERCEPT_REDIRECTS': False,
-    }
 
